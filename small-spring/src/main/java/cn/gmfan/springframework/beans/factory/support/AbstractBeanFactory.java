@@ -7,9 +7,11 @@ import cn.gmfan.springframework.beans.factory.config.BeanDefinition;
 import cn.gmfan.springframework.beans.factory.config.BeanPostProcessor;
 import cn.gmfan.springframework.beans.factory.config.ConfigurableBeanFactory;
 import cn.gmfan.springframework.util.ClassUtil;
+import cn.gmfan.springframework.util.StringValueResolver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author gmfan
@@ -22,6 +24,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport
      * 要在createBean中应用的BeanPostProcessors
      */
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
+
+    /**
+     * 应用于注释的字符串解析器
+     */
+    private final List<StringValueResolver> embeddedValueResolver = new ArrayList<>();
 
     @Override
     public Object getBean(String name) throws BeansException{
@@ -108,4 +115,17 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport
         return this.beanClassLoader;
     }
 
+    @Override
+    public void addEmbeddedValueResolver(StringValueResolver valueResolver) {
+        this.embeddedValueResolver.add(valueResolver);
+    }
+
+    @Override
+    public String resolveEmbeddedValue(String value) {
+        String res = value;
+        for (StringValueResolver resolver : embeddedValueResolver) {
+            res = resolver.resolveStringValue(res);
+        }
+        return res;
+    }
 }

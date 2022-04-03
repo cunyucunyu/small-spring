@@ -4,8 +4,7 @@ import cn.gmfan.springframework.beans.BeansException;
 import cn.gmfan.springframework.beans.factory.ConfigurableListableBeanFactory;
 import cn.gmfan.springframework.beans.factory.config.BeanDefinition;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -63,4 +62,19 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     }
 
 
+    @Override
+    public <T> T getBean(Class<T> requiredType) throws BeansException {
+        List<String> beanNames = new ArrayList<>();
+        for (Map.Entry<String, BeanDefinition> entry : beanDefinitionMap.entrySet()) {
+            Class beanClass = entry.getValue().getBeanClass();
+            if (requiredType.isAssignableFrom(beanClass)) {
+                beanNames.add(entry.getKey());
+            }
+        }
+        if (beanNames.size() == 1) {
+            return getBean(beanNames.get(0), requiredType);
+        }
+
+        throw new BeansException(requiredType+"期望的Singleton对象没有找到"+beanNames.size()+":"+ beanNames);
+    }
 }

@@ -23,16 +23,6 @@ public class IOTest {
         testIOByPath("classpath:important.properties");
     }
 
-    @Test
-    public void filePath() throws IOException {
-        testIOByPath("src/main/resources/important.properties");
-    }
-
-    @Test
-    public void urlPath() throws IOException {
-        testIOByPath("https://github.com/fuzhengwei/small-spring/blob/main/important.properties");
-    }
-
     void testIOByPath(String path) throws IOException {
         Resource resource = resourceLoader.getResource(path);
         String content = IoUtil.readUtf8(resource.getInputStream());

@@ -6,15 +6,16 @@ import cn.gmfan.springframework.aop.framework.ProxyFactory;
 import cn.gmfan.springframework.beans.BeansException;
 import cn.gmfan.springframework.beans.factory.BeanFactory;
 import cn.gmfan.springframework.beans.factory.BeanFactoryAware;
+import cn.gmfan.springframework.beans.factory.PropertyValues;
 import cn.gmfan.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import cn.gmfan.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 /**
+ * 此类实现了对象实例化之前感知，Bean Factory感知
  * @author gmfan
  */
 public class DefaultAdvisorAutoProxyCreator implements
@@ -48,6 +49,7 @@ public class DefaultAdvisorAutoProxyCreator implements
         Collection<AspectJExpressionPointcutAdvisor> advisors = beanFactory
                 .getBeansOfType(AspectJExpressionPointcutAdvisor.class).values();
 
+        //这里实际只会执行一个代理拦截的自定义方法
         for (AspectJExpressionPointcutAdvisor advisor : advisors) {
             ClassFilter classFilter = advisor.getPointcut().getClassFilter();
             if (!classFilter.matches(beanClass)) {
@@ -73,6 +75,16 @@ public class DefaultAdvisorAutoProxyCreator implements
         }
 
         return null;
+    }
+
+    @Override
+    public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
+        return true;
+    }
+
+    @Override
+    public PropertyValues postProcessPropertyValues(PropertyValues propertyValues, Object bean, String beanName) throws BeansException {
+        return propertyValues;
     }
 
     private boolean isInfrastructureClass(Class<?> beanClass) {

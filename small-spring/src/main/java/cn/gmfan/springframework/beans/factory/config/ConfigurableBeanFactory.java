@@ -1,6 +1,7 @@
 package cn.gmfan.springframework.beans.factory.config;
 
 import cn.gmfan.springframework.beans.factory.HierarchicalBeanFactory;
+import cn.gmfan.springframework.util.StringValueResolver;
 
 /**
  * 大多数工厂将实现此配置接口，提供配置Bean创建方式配置。以及提供给客户端添加
@@ -30,4 +31,16 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, Single
      */
     void destroySingletons();
 
+    /**
+     * Add a String resolver for embedded values such as annotation attributes.
+     * @param valueResolver the String resolver to apply to embedded values
+     */
+    void addEmbeddedValueResolver(StringValueResolver valueResolver);
+
+    /**
+     * 处理给定的字符串表达式用于获取实际的属性值
+     * @param value
+     * @return
+     */
+    String resolveEmbeddedValue(String value);
 }
