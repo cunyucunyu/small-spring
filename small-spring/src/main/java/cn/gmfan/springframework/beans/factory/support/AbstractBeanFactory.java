@@ -3,6 +3,7 @@ package cn.gmfan.springframework.beans.factory.support;
 import cn.gmfan.springframework.beans.BeansException;
 import cn.gmfan.springframework.beans.factory.FactoryBean;
 import cn.gmfan.springframework.beans.factory.FactoryBeanRegistrySupport;
+import cn.gmfan.springframework.beans.factory.PropertyValue;
 import cn.gmfan.springframework.beans.factory.config.BeanDefinition;
 import cn.gmfan.springframework.beans.factory.config.BeanPostProcessor;
 import cn.gmfan.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -46,6 +47,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport
     }
 
     protected <T> T doGetBean(final String name, final Object[] args) {
+
         //从缓存中获取bean
         Object bean = getSingleton(name);
         if (bean != null) {
@@ -53,6 +55,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport
         }
 
         BeanDefinition beanDefinition = getBeanDefinition(name);
+
         bean = createBean(name, beanDefinition, args);
         return (T) getObjectForBeanInstance(bean, name);
     }

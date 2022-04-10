@@ -1,10 +1,13 @@
 package cn.gmfan.springframework.aop;
 
+import cn.gmfan.springframework.stereotype.Component;
+
 import java.lang.reflect.Method;
 
 /**
  * @author gmfan
  */
+//@Component("beforeAdvice")
 public class UserServiceBeforeAdvice implements MethodBeforeAdvice {
 
     @Override

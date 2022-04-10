@@ -4,6 +4,7 @@ import cn.gmfan.springframework.aop.AdvisedSupport;
 import cn.gmfan.springframework.aop.AopProxy;
 
 /**
+ * 代理工厂
  * @author gmfan
  */
 public class ProxyFactory {

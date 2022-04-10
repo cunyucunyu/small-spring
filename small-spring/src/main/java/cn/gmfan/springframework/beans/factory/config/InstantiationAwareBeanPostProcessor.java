@@ -19,7 +19,9 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
     Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException;
 
     /**
-     * 对象初始化之后执行此方法
+     * 对象初始化之后执行此方法，若执行完此方法后返回true则可以继续执行后续的
+     * InstantiationAwareBeanPostProcessor及其子类对象方法，若为false则不在执行后续的
+     * InstantiationAwareBeanPostProcessor及其子类对象方法
      * @param bean
      * @param beanName
      * @return
@@ -31,6 +33,7 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
      * 在BeanFactory创建bean之前处理propertyValues
      * <p></p>
      * 对象初始化之后执行此方法
+     *
      * @param propertyValues
      * @param bean
      * @param beanName
@@ -38,4 +41,14 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
      * @throws BeansException
      */
     PropertyValues postProcessPropertyValues(PropertyValues propertyValues, Object bean, String beanName) throws BeansException;
+
+    /**
+     *
+     * @param bean
+     * @param beanName
+     * @return
+     */
+    default Object getEarlyBeanReference(Object bean, String beanName) {
+        return bean;
+    }
 }

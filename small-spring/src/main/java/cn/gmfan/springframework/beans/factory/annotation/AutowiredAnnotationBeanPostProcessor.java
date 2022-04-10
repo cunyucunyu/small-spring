@@ -7,7 +7,6 @@ import cn.gmfan.springframework.beans.factory.ConfigurableListableBeanFactory;
 import cn.gmfan.springframework.beans.factory.PropertyValues;
 import cn.gmfan.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import cn.gmfan.springframework.beans.util.BeanUtil;
-import cn.gmfan.springframework.stereotype.Component;
 import cn.gmfan.springframework.util.ClassUtil;
 
 import java.lang.reflect.Field;
@@ -30,7 +29,7 @@ public class AutowiredAnnotationBeanPostProcessor implements
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        return null;
+        return bean;
     }
 
     @Override
@@ -40,11 +39,12 @@ public class AutowiredAnnotationBeanPostProcessor implements
 
     @Override
     public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
-        return false;
+        return true;
     }
 
     @Override
     public PropertyValues postProcessPropertyValues(PropertyValues propertyValues, Object bean, String beanName) throws BeansException {
+
         //1.处理注解@Value
         Class<?> clazz = bean.getClass();
         clazz = ClassUtil.isCglibProxyClass(clazz) ? clazz.getSuperclass() : clazz;
@@ -56,7 +56,7 @@ public class AutowiredAnnotationBeanPostProcessor implements
             if (valueAnnotation != null) {
                 String value = valueAnnotation.value();
                 value = beanFactory.resolveEmbeddedValue(value);
-                BeanUtil.setFieldValue(bean,field.getName(),value);
+                BeanUtil.setFieldValue(bean, field.getName(), value);
             }
         }
 
@@ -71,10 +71,10 @@ public class AutowiredAnnotationBeanPostProcessor implements
                 if (qualifier != null) {
                     dependentBeanName = qualifier.value();
                     dependentBean = beanFactory.getBean(dependentBeanName, fieldType);
-                }else{
+                } else {
                     dependentBean = beanFactory.getBean(fieldType);
                 }
-                BeanUtil.setFieldValue(bean,field.getName(),dependentBean);
+                BeanUtil.setFieldValue(bean, field.getName(), dependentBean);
             }
         }
         return propertyValues;

@@ -1,5 +1,7 @@
 package cn.gmfan.springframework.aop;
 
+import cn.gmfan.springframework.util.ClassUtil;
+
 /**
  * @author gmfan
  */
@@ -11,11 +13,25 @@ public class TargetSource {
         this.target = target;
     }
 
+    /**
+     * 返回被代理对象的接口信息
+     * @return
+     */
     public Class<?>[] getTargetInterfaces(){
-        return this.target.getClass().getInterfaces();
+        return getTargetClass().getInterfaces();
     }
 
     public Object getTarget(){
         return this.target;
+    }
+
+    /**
+     * 获取被代理类的 Class 对象
+     * @return
+     */
+    public Class<?> getTargetClass(){
+        //由于 target 有可能是 Cglib 创建的，所以需要判断是否为 Cglib 创建
+        return ClassUtil.isCglibProxyClass(target.getClass()) ?
+                target.getClass().getSuperclass() : target.getClass();
     }
 }

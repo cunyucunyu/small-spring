@@ -8,7 +8,7 @@ import java.util.Random;
 /**
  * @author gmfan
  */
-@Component("userService")
+@Component
 public class UserService implements IUserService {
 
     @Value("${token}")

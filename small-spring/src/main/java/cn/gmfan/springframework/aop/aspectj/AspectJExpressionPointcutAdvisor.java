@@ -8,11 +8,17 @@ import org.aopalliance.aop.Advice;
  * @author gmfan
  */
 public class AspectJExpressionPointcutAdvisor implements PointcutAdvisor {
-    //切面
+    /**
+     * 切面
+     */
     private AspectJExpressionPointcut pointcut;
-    //具体拦截方法
+    /**
+     * 具体拦截方法
+     */
     private Advice advice;
-    //表达式
+    /**
+     * 表达式
+     */
     private String expression;
 
     @Override

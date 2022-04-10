@@ -2,38 +2,21 @@
 <beans xmlns:context="http://www.springframework.org/schema/context"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/context ">
-    <!--    <bean id="userService" class="cn.gmfan.springframework.aop.UserService"/>-->
-
-    <!--  此类实现了InstantiationAwareBeanPostProcessor, BeanFactoryAware，所以回在实例化之前执行，并且可以感知到BeanFactory  -->
-    <!--    <bean class="cn.gmfan.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>-->
-
-    <!--    <bean id="beforeAdvice" class="cn.gmfan.springframework.aop.UserServiceBeforeAdvice"/>-->
-
-    <!--    <bean id="methodInterceptor" class="cn.gmfan.springframework.aop.framework.adapter.MethodBeforeAdviceInterceptor">-->
-    <!--        <property name="advice" ref="beforeAdvice"/>-->
-    <!--    </bean>-->
-
-    <!--    <bean id="pointcutAdvisor" class="cn.gmfan.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor">-->
-    <!--        <property name="expression" value="execution(* cn.gmfan.springframework.aop.IUserService.*(..))"/>-->
-    <!--        <property name="advice" ref="methodInterceptor"/>-->
-    <!--    </bean>-->
-    <!---->
-    <!--    <bean id="pointcutAdvisor2" class="cn.gmfan.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor">-->
-    <!--        <property name="expression" value="execution(* cn.gmfan.springframework.aop.IUserService.*(..))"/>-->
-    <!--        <property name="advice" ref="methodInterceptor2"/>-->
-    <!--    </bean>-->
-    <!---->
-    <!--    <bean id="methodInterceptor2" class="cn.gmfan.springframework.aop.UserServiceInterceptor">-->
-    <!--    </bean>-->
 
     <bean class="cn.gmfan.springframework.beans.factory.PropertyPlaceholderConfigurer">
         <property name="location" value="classpath:token.properties"/>
     </bean>
 
     <context:component-scan base-package="cn.gmfan.springframework"/>
+    <!-- AOP 配置 -->
+    <bean class="cn.gmfan.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
 
-    <!--    <bean id="userService" class="cn.gmfan.springframework.aop.UserService">-->
-    <!--        <property name="token" value="${token}"/>-->
-    <!--    </bean>-->
+    <bean id="methodInterceptor" class="cn.gmfan.springframework.aop.framework.adapter.MethodBeforeAdviceInterceptor">
+        <property name="advice" ref="beforeAdvice"/>
+    </bean>
+    <bean id="pointcutAdvisor" class="cn.gmfan.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor">
+        <property name="expression" value="execution(* cn.gmfan.springframework.aop.bean.WifeInterface.*(..))"/>
+        <property name="advice" ref="methodInterceptor"/>
+    </bean>
 
 </beans>

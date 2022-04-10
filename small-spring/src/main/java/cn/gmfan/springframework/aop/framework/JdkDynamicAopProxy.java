@@ -2,6 +2,7 @@ package cn.gmfan.springframework.aop.framework;
 
 import cn.gmfan.springframework.aop.AdvisedSupport;
 import cn.gmfan.springframework.aop.AopProxy;
+import cn.gmfan.springframework.util.ClassUtil;
 import org.aopalliance.intercept.MethodInterceptor;
 
 import java.lang.reflect.InvocationHandler;
@@ -29,7 +30,7 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         //检查方法是否匹配
-        if (advised.getMethodMatcher().matches(method, advised.getTargetSource().getTarget().getClass())) {
+        if (advised.getMethodMatcher().matches(method, advised.getTargetSource().getTargetClass())) {
             MethodInterceptor methodInterceptor = advised.getMethodInterceptor();
             return methodInterceptor.invoke(new ReflectiveMethodInvocation(advised.getTargetSource().getTarget(), method, args));
         }

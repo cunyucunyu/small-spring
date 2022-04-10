@@ -12,6 +12,8 @@ import cn.gmfan.springframework.beans.factory.support.DefaultListableBeanFactory
 import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 
 /**
@@ -35,45 +37,41 @@ public class DefaultAdvisorAutoProxyCreator implements
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        return bean;
-    }
-
-    @Override
-    public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
-
-        //如果是Advice、Pointcut、Advisor则不代理
-        if (isInfrastructureClass(beanClass)) {
-            return null;
+        //如果是Advice、Pointcut、Advisor的子类则不需要代理
+        if (isInfrastructureClass(bean.getClass())) {
+            return bean;
         }
 
         Collection<AspectJExpressionPointcutAdvisor> advisors = beanFactory
                 .getBeansOfType(AspectJExpressionPointcutAdvisor.class).values();
 
-        //这里实际只会执行一个代理拦截的自定义方法
+        //下面的方法遍历匹配表达式的类，并且只有一个Advice会被执行
         for (AspectJExpressionPointcutAdvisor advisor : advisors) {
+            //获取类过滤器
             ClassFilter classFilter = advisor.getPointcut().getClassFilter();
-            if (!classFilter.matches(beanClass)) {
+            if (!classFilter.matches(bean.getClass())) {
                 continue;
             }
+            AdvisedSupport advisedSupport = new AdvisedSupport();
 
-            AdvisedSupport support = new AdvisedSupport();
-
-            TargetSource targetSource = null;
-
-            try {
-                targetSource=new TargetSource(beanClass
-                        .getDeclaredConstructor().newInstance());
-            } catch (Exception e) {
-                e.printStackTrace();
+            TargetSource targetSource = new TargetSource(bean);
+            advisedSupport.setTargetSource(targetSource);
+            advisedSupport.setMethodMatcher(advisor.getPointcut().getMethodMatcher());
+            advisedSupport.setMethodInterceptor((MethodInterceptor) advisor.getAdvice());
+            //ture 使用 Cglib 代理，false 使用 JDK 代理，存在父类接口则使用 JDK 代理，不存在使用 JDK 代理
+            if(advisedSupport.getTargetSource().getTargetInterfaces().length>0){
+                advisedSupport.setProxyTargetClass(false);
+            }else{
+                advisedSupport.setProxyTargetClass(true);
             }
-            support.setTargetSource(targetSource);
-            support.setMethodInterceptor((MethodInterceptor) advisor.getAdvice());
-            support.setMethodMatcher(advisor.getPointcut().getMethodMatcher());
-            support.setProxyTargetClass(false);
 
-            return new ProxyFactory(support).getProxy();
+            return new ProxyFactory(advisedSupport).getProxy();
         }
+        return bean;
+    }
 
+    @Override
+    public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
         return null;
     }
 
@@ -87,6 +85,11 @@ public class DefaultAdvisorAutoProxyCreator implements
         return propertyValues;
     }
 
+    /**
+     * 如果是Advice、Pointcut、Advisor的子类则返回true
+     * @param beanClass
+     * @return
+     */
     private boolean isInfrastructureClass(Class<?> beanClass) {
         return Advice.class.isAssignableFrom(beanClass) ||
                 Pointcut.class.isAssignableFrom(beanClass) ||
