@@ -83,8 +83,11 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
      * @param singletonFactory bean instance
      */
     protected void addSingletonFactory(String beanName, ObjectFactory<?> singletonFactory) {
+        //一级缓存
         if (!singletonFactories.containsKey(beanName)) {
+            //三级缓存
             singletonFactories.put(beanName, singletonFactory);
+            //二级缓存
             earlySingletonObjects.remove(beanName);
         }
     }

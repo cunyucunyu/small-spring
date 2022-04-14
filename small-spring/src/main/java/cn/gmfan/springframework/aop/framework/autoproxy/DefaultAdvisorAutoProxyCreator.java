@@ -15,6 +15,9 @@ import org.aopalliance.intercept.MethodInterceptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 此类实现了对象实例化之前感知，Bean Factory感知
@@ -24,6 +27,8 @@ public class DefaultAdvisorAutoProxyCreator implements
         InstantiationAwareBeanPostProcessor, BeanFactoryAware {
 
     private DefaultListableBeanFactory beanFactory;
+
+    private final Set<Object> earlyProxyReferences = Collections.synchronizedSet(new HashSet<>());
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
@@ -37,6 +42,41 @@ public class DefaultAdvisorAutoProxyCreator implements
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        //判断是否已经创建过代理对象了
+        if (!earlyProxyReferences.contains(beanName)) {
+            return wrapIfNecessary(bean, beanName);
+        }
+        return bean;
+    }
+
+    @Override
+    public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
+        return null;
+    }
+
+    @Override
+    public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
+        return true;
+    }
+
+    @Override
+    public PropertyValues postProcessPropertyValues(PropertyValues propertyValues, Object bean, String beanName) throws BeansException {
+        return propertyValues;
+    }
+
+    @Override
+    public Object getEarlyBeanReference(Object bean,String beanName){
+        earlyProxyReferences.add(beanName);
+        return wrapIfNecessary(bean, beanName);
+    }
+
+    /**
+     * 创建代理对象
+     * @param bean
+     * @param beanName
+     * @return
+     */
+    protected Object wrapIfNecessary(Object bean, String beanName) {
         //如果是Advice、Pointcut、Advisor的子类则不需要代理
         if (isInfrastructureClass(bean.getClass())) {
             return bean;
@@ -68,21 +108,6 @@ public class DefaultAdvisorAutoProxyCreator implements
             return new ProxyFactory(advisedSupport).getProxy();
         }
         return bean;
-    }
-
-    @Override
-    public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
-        return null;
-    }
-
-    @Override
-    public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
-        return true;
-    }
-
-    @Override
-    public PropertyValues postProcessPropertyValues(PropertyValues propertyValues, Object bean, String beanName) throws BeansException {
-        return propertyValues;
     }
 
     /**

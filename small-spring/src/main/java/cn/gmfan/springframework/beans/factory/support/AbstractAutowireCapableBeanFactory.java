@@ -5,7 +5,9 @@ import cn.gmfan.springframework.beans.factory.*;
 import cn.gmfan.springframework.beans.factory.config.*;
 import cn.gmfan.springframework.beans.util.BeanUtil;
 import cn.gmfan.springframework.beans.util.BeanUtilException;
+import cn.gmfan.springframework.core.convert.ConversionService;
 import cn.gmfan.springframework.util.StringUtil;
+import cn.hutool.core.util.TypeUtil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -34,7 +36,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             //实例化Bean
             bean = createBeanInstance(beanDefinition,beanName,args);
 
-            //处理循环依赖，将实例化后的Bean对象提前放入缓存中暴露出来
+            //处理循环依赖，将实例化后的Bean对象提前放入缓存中暴露出来，添加到三级缓存
             if (beanDefinition.isSingleton()) {
                 Object finalBean = bean;
                 addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, beanDefinition, finalBean));
@@ -67,7 +69,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         Object exposeObject = bean;
         //判断是否是单例
         if (beanDefinition.isSingleton()) {
-            //exposeObject = getSingleton(beanName);获取代理对象
+            //获取代理对象
+            exposeObject = getSingleton(beanName);
             registerSingleton(beanName,exposeObject);
         }
         return exposeObject;
@@ -232,6 +235,16 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             if (value instanceof BeanReference) {
                 BeanReference beanReference = (BeanReference) value;
                 value = getBean(beanReference.getBeanName());
+                //类型转换
+            }else {
+                Class<?> sourceType = value.getClass();
+                Class<?> targetType = (Class<?>) TypeUtil.getFieldType(bean.getClass(), name);
+                ConversionService conversionService = getConversionService();
+                if (conversionService != null) {
+                    if (conversionService.canConvert(sourceType, targetType)) {
+                        value = conversionService.convert(value, targetType);
+                    }
+                }
             }
 
             if (value == null) {

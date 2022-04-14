@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 /**
  * @author gmfan
  */
-@Component("beforeAdvice")
+//@Component("beforeAdvice")
 public class SpouseAdvice implements MethodBeforeAdvice {
     @Override
     public void before(Method method, Object[] args, Object target) throws Throwable {

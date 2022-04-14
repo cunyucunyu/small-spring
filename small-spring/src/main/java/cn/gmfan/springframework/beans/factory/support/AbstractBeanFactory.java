@@ -7,6 +7,7 @@ import cn.gmfan.springframework.beans.factory.PropertyValue;
 import cn.gmfan.springframework.beans.factory.config.BeanDefinition;
 import cn.gmfan.springframework.beans.factory.config.BeanPostProcessor;
 import cn.gmfan.springframework.beans.factory.config.ConfigurableBeanFactory;
+import cn.gmfan.springframework.core.convert.ConversionService;
 import cn.gmfan.springframework.util.ClassUtil;
 import cn.gmfan.springframework.util.StringValueResolver;
 
@@ -25,6 +26,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport
      * 要在createBean中应用的BeanPostProcessors
      */
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
+
+    /**
+     * 类型服务转换
+     */
+    ConversionService conversionService;
 
     /**
      * 应用于注释的字符串解析器
@@ -130,5 +136,15 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport
             res = resolver.resolveStringValue(res);
         }
         return res;
+    }
+
+    @Override
+    public void setConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
+
+    @Override
+    public ConversionService getConversionService() {
+        return conversionService;
     }
 }

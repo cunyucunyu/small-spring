@@ -8,7 +8,7 @@ import java.lang.reflect.Proxy;
 /**
  * @author gmfan
  */
-@Component
+//@Component
 public class HusbandMother implements FactoryBean<IMother> {
 
     @Override

@@ -25,6 +25,11 @@ public class PropertyPlaceholderConfigurer implements BeanFactoryPostProcessor {
      */
     public static final String DEFAULT_PLACEHOLDER_SUFFIX="}";
 
+    /**
+     * 使用默认值是的分割符
+     */
+    public static final String DEFAULT_PLACEHOLDER_DEFAULT = ":";
+
     private String location;
 
     @Override
@@ -73,10 +78,17 @@ public class PropertyPlaceholderConfigurer implements BeanFactoryPostProcessor {
     private String resolvePlaceholder(String value, Properties properties) {
         String strVal = (String) value;
         int startIdx = strVal.indexOf(DEFAULT_PLACEHOLDER_PREFIX);
-        int stopIdx = strVal.indexOf(DEFAULT_PLACEHOLDER_SUFFIX);
+        int stopIdx = strVal.indexOf(DEFAULT_PLACEHOLDER_DEFAULT)==-1?strVal.indexOf(DEFAULT_PLACEHOLDER_SUFFIX):strVal.indexOf(DEFAULT_PLACEHOLDER_DEFAULT);
         if (startIdx != -1 && stopIdx != -1 && startIdx < stopIdx) {
             String propKey = strVal.substring(startIdx + 2, stopIdx);
             String propVal = properties.getProperty(propKey);
+            //使用默认值
+            if (propVal == null) {
+                int defaultIdx = strVal.indexOf(DEFAULT_PLACEHOLDER_DEFAULT);
+                if (defaultIdx != -1) {
+                    propVal = strVal.substring(defaultIdx + 1, strVal.length() - 1);
+                }
+            }
             return propVal;
         }
         return null;

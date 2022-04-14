@@ -9,12 +9,12 @@ import cn.gmfan.springframework.stereotype.Component;
 /**
  * @author gmfan
  */
-@Component
-public class Wife implements WifeInterface{
-    @Autowired
+//@Component
+public class Wife{
+//    @Autowired
     private Husband husband;
-    @Qualifier("husbandMother")
-    @Autowired
+//    @Qualifier("husbandMother")
+//    @Autowired
     private IMother mother;
 
     public String queryHusband(){

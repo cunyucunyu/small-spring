@@ -6,9 +6,9 @@ import cn.gmfan.springframework.stereotype.Component;
 /**
  * @author gmfan
  */
-@Component
+//@Component
 public class Husband {
-    @Autowired
+//    @Autowired
     private Wife wife;
 
     public String queryWife(){

@@ -1,6 +1,7 @@
 package cn.gmfan.springframework.beans.factory.config;
 
 import cn.gmfan.springframework.beans.factory.HierarchicalBeanFactory;
+import cn.gmfan.springframework.core.convert.ConversionService;
 import cn.gmfan.springframework.util.StringValueResolver;
 
 /**
@@ -43,4 +44,16 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, Single
      * @return
      */
     String resolveEmbeddedValue(String value);
+
+    /**
+     * 设置类型转换服务
+     * @param conversionService
+     */
+    void setConversionService(ConversionService conversionService);
+
+    /**
+     * 获取类型转换服务
+     * @return
+     */
+    ConversionService getConversionService();
 }
