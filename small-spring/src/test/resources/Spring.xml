@@ -3,14 +3,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/context ">
 
-    <bean class="cn.gmfan.springframework.beans.factory.PropertyPlaceholderConfigurer">
+    <bean class="cn.gmfan.smallspring.beans.factory.PropertyPlaceholderConfigurer">
         <property name="location" value="classpath:token.properties"/>
-    </bean>
-
-    <context:component-scan base-package="cn.gmfan.springframework"/>
-
-    <bean id="conversionService" class="cn.gmfan.springframework.core.convert.support.ConversionServiceFactoryBean">
-        <property name="converters" ref="converters"/>
     </bean>
 
 </beans>
