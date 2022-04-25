@@ -32,6 +32,12 @@ public class PropertyPlaceholderConfigurer implements BeanFactoryPostProcessor {
 
     private String location;
 
+    public PropertyPlaceholderConfigurer(){}
+
+    public PropertyPlaceholderConfigurer(String configLocation) {
+        this.location = configLocation;
+    }
+
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         try{

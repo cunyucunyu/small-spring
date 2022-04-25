@@ -60,14 +60,14 @@ public class SmallSpringApplication{
         if (config != null) {
            context = new ClassPathXmlApplicationContext("classpath:"+config);
         }else{
-            throw  new RuntimeException("没有配置文件");
+            context = new ClassPathXmlApplicationContext();
         }
 
         ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(context.getReader().getRegistry());
         scanner.doScan(SMALL_SPRING_PACKAGE);
         if (boot!=null){
             String[] scanBasePackages = boot.scanBasePackages();
-            if (scanBasePackages != null) {
+            if (scanBasePackages != null && scanBasePackages.length>0) {
                 scanner.doScan(scanBasePackages);
             }else{
                 String mainName = mainApplicationClass.getName();

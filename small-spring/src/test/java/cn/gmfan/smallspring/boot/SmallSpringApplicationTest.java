@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @author gmfan
  */
-@SmallSpringBoot(scanBasePackages = {"cn.gmfan.smallspring.boot.bean"})
+@SmallSpringBoot
 public class SmallSpringApplicationTest {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SmallSpringApplication.run(SmallSpringApplicationTest.class, args);
